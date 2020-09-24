@@ -18,6 +18,9 @@ def addAudioFiles(nids):
     mw.progress.start()
     for nid in nids:
         note = mw.col.getNote(nid)
+
+        if "no_sound" in note.tags:
+            continue
         
         if srcFieldKana not in note:
             showInfo(f"No source field '{srcFieldKana}' field found for kana")
@@ -39,10 +42,10 @@ def addAudioFiles(nids):
         if data:
             mw.col.media.writeData(file_name, data) # write to the collection
             note[dstFieldAudio] = u'[sound:{}]'.format(file_name) # add corresponding file name to field
-            note.flush()
         else:
             #showInfo("No sound found")
-            continue 
+            note.tags.append("no_sound")
+        note.flush()
     mw.progress.finish()
     mw.reset()
 
