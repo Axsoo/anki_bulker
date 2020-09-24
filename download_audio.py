@@ -5,79 +5,61 @@ import logging
 import hashlib
 import re
 
-#DIR2 = 'C:/tmp/'
 BASE_URL = 'http://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji='
 WANI_URL = 'https://www.wanikani.com/vocabulary/'
-
-def configure_logging():
-    logger = logging.getLogger("audio_logger")
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    handler.setFormatter(
-        logging.Formatter('[%(module)s]: %(message)s'))
-    logger.addHandler(handler)
-    Filehandler = logging.FileHandler("C:/users/public/image_downloader_log.txt") #Path to your LOG FILE.
-    Filehandler.setFormatter(
-        logging.Formatter('[%(module)s]: %(message)s'))
-    logger.addHandler(Filehandler)
-    return logger
-
-logger = configure_logging()
 
 def audioDownloadWani(kanji):
     kanji = re.sub('<[^<]+?>', '', kanji) # Remove trailing html
     url = WANI_URL + quote(kanji)
 
-    # Souping
+    """ Souping for mp3-files """
     try:
         response = urlopen(Request(url))
     except HTTPError:
-        logger.info(f'Exception occured returning (None,None)...')
+        print(f'Exception occured returning (None,None)...')
         return (None,None)
     soup = BeautifulSoup(response, 'html.parser')
-    logger.info('Getting sound elements...')
     mp3_url_matches = re.findall(r'(?:http(?:s?):)(?:[/|.|\w|\s|-])*\.(?:mp3)',str(soup))
-    # Check matches
+
+    """ Check for matches """
     if mp3_url_matches:
-        url = mp3_url_matches[0] # We go with the first mp3 (lady voice)
+        url = mp3_url_matches[0] # Choose the first mp3 available (lady voice)
     else:
         return (None,None)
-    # Filename
+    
+    """ Create the file name """
     filename = u'wanikani_{}'.format(kanji)
     filename += u'.mp3'
-    logger.info(f"Filename: {filename}")
-    # Get file from url
+
+    """ Get file from url """
     try:
-        logger.info(f'Opening url for {kanji}...')
         resp = urlopen(url)
-        #urlretrieve(url, DIR2 + filename) # Downloads file
         raw_sound = resp.read()
         return (raw_sound, filename)
     except URLError:
-        logger.info(f'Exception occured returning (None,None)...')
+        print(f'Exception occured returning (None,None)...')
         return (None,None)
 
 def audioDownloadYomi(kana, kanji):
     kana = re.sub('<[^<]+?>', '', kana) # Remove trailing html
     kanji = re.sub('<[^<]+?>', '', kanji) # Remove trailing html
     url = BASE_URL + quote(kanji)
-    # Filename
+
+    """ Create the file name """
     filename = u'yomichan_{}'.format(kana)
     if kanji:
         filename += u'_{}'.format(kanji)
     filename += u'.mp3'
-    logger.info(f"Filename: {filename}")
     if kana:
         url += u'&kana={}'.format(quote(kana))
-    # Get file from url
+
+    """ Get file from url """
     try:
-        logger.info(f'Opening url for {kana}...')
         resp = urlopen(url)
-        #urlretrieve(url, DIR2 + filename)
         raw_sound = resp.read()
         return (raw_sound, filename)
     except URLError:
-        logger.info(f'Exception occured returning (None,None)...')
+        print(f'Exception occured returning (None,None)...')
         return (None,None)
 
 def audioIsPlaceholder(data):
@@ -86,22 +68,15 @@ def audioIsPlaceholder(data):
     return m.hexdigest() == '7e2c2f954ef6051373ba916f000168dc'
 
 def audioDownload(kana, kanji):
-    # Test downloading from yomichan
-    (sound_data, filename) = audioDownloadYomi(kana,kanji)
-    # Check if placeholder
+    (sound_data, filename) = audioDownloadYomi(kana,kanji) # Test downloading from Yomichan
     if audioIsPlaceholder(sound_data):
-        logger.info(f"No sound found (Yomichan) {(kana, kanji)}")
-        # Test downloading from wanikani
-        (sound_data, filename) = audioDownloadWani(kanji)
+        (sound_data, filename) = audioDownloadWani(kanji) # Test downloading from wanikani
         if sound_data == None:
-            logger.info(f"No sound found (Wanikani) {(kana, kanji)}")
-            return (None, None)
+            return (None, None) # No sound found Wanikani
         else:
-            logger.info(f"Sound found (Wanikani) {(kana, kanji)}")
-            return (sound_data, filename)
+            return (sound_data, filename) # Sound found for Wanikani
     else:
-        logger.info(f"Sound found (Yomichan) {(kana, kanji)}")
-        return (sound_data, filename)
+        return (sound_data, filename) # Sound found for Yomichan
 
 if __name__ == "__main__":
     print("testing...")
