@@ -8,13 +8,13 @@ from aqt.utils import showInfo
 from .download_audio import audioDownload
 
 config = mw.addonManager.getConfig(__name__)
+ResDir = os.path.join(os.path.dirname(__file__), "resources")
 
 """ Config values """
 srcFieldKanji = config['srcFieldKanji']
 srcFieldKana = config['srcFieldKana']
 dstFieldDef = config['dstFieldDef']
 
-ResDir = os.path.join(os.path.dirname(__file__), "resources")
 
 def getWordInfo(kanji_word):
     with open(os.path.join(ResDir, "final_dict.json"),"r",encoding='utf-8') as dict_file:

@@ -3,5 +3,6 @@
     "srcFieldKana": "Vocabulary-Kana",
     "dstFieldAudio": "Vocabulary-Audio",
     "dstFieldDef": "Sanseido",
-    "dstFieldImage": "Image"
+    "dstFieldImage": "Image",
+    "dstFieldSentence": "Expression"
 }
