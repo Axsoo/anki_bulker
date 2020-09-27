@@ -1,1 +1,1 @@
-{"config": {"dstFieldAudio": "Vocabulary-Audio", "dstFieldImage": "Image", "srcFieldKana": "Vocabulary-Kana", "srcFieldKanji": "Vocabulary-Kanji-Plain"}}
+{"config": {"dstFieldAudio": "Vocabulary-Audio", "dstFieldDef": "Sanseido", "dstFieldImage": "Image", "dstFieldSentence": "Expression", "overwriteImages": "false", "srcFieldKana": "Vocabulary-Kana", "srcFieldKanji": "Vocabulary-Kanji-Plain"}}

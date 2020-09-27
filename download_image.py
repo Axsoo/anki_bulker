@@ -25,7 +25,11 @@ def filter_url_list(url_list):
     url_list = [value for value in url_list if 'business-textbooks' not in value]
     url_list = [value for value in url_list if 'jlptsensei' not in value]
     url_list = [value for value in url_list if 'japanesetest4you' not in value]
+    url_list = [value for value in url_list if '99bako' not in value]
     url_list = [value for value in url_list if 'otonasalone' not in value]
+    url_list = [value for value in url_list if 'business-textbooks' not in value]
+    url_list = [value for value in url_list if 'reibuncnt' not in value]
+    url_list = [value for value in url_list if 'career-picks' not in value]
     return url_list
 
 def imageDownload(kanji):

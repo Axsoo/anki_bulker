@@ -6,6 +6,7 @@ from anki.hooks import addHook
 from aqt import mw
 from aqt.utils import showInfo
 from .download_audio import audioDownload
+from .fetchSanseido import fetchDef
 
 config = mw.addonManager.getConfig(__name__)
 ResDir = os.path.join(os.path.dirname(__file__), "resources")
@@ -28,12 +29,10 @@ def getWordInfo(kanji_word):
 
 def addDefinition(nids):
     mw.checkpoint("Download Def")
-    mw.progress.start()
-    for nid in nids:
+    mw.progress.start(max=len( nids ) , immediate=True) #Loading bar
+    for (i, nid) in enumerate(nids):
+        mw.progress.update( label='Generating Definitions...', value=i )
         note = mw.col.getNote(nid)
-
-        if "no_daijisen" in note.tags:
-            continue
 
         if srcFieldKanji not in note:
             showInfo(f"No source field '{srcFieldKanji}' field found for kanji")
@@ -42,17 +41,25 @@ def addDefinition(nids):
         if dstFieldDef not in note:
             showInfo(f"No destination field '{dstFieldDef}' field found for definition")
             continue # no destination definition field
-
+        
         if note[dstFieldDef]:
             continue # already contains data
-    
-        entry = getWordInfo(note[srcFieldKanji]) # get the actual definition
+        
+        """ Daijisen """
+        if "no_daijisen" not in note.tags:
+            entry = getWordInfo(note[srcFieldKanji]) # get the actual definition
+            if entry[4]:
+                note[dstFieldDef] = entry[4] # add corresponding file name to field
+            else:
+                note.tags.append("no_daijisen")
 
-        if entry[4]:
-            note[dstFieldDef] = entry[4] # add corresponding file name to field
-        else:
-            #showInfo("No def found")
-            note.tags.append("no_daijisen")
+        """ Sanseido """
+        if "no_sanseido" not in note.tags and "no_daijisen" in note.tags:
+            def_entry = fetchDef(note[srcFieldKanji]) 
+            if def_entry:
+                note[dstFieldDef] = def_entry
+            else:
+                note.tags.append("no_sanseido")
         note.flush()
     mw.progress.finish()
     mw.reset()
@@ -65,5 +72,6 @@ def setupBrowserMenu(browser):
 
 def onAddDef(browser):
     addDefinition(browser.selectedNotes()) # send note id:s as argument
+    mw.requireReset() # Require reset?
 
 addHook("browser.setupMenus", setupBrowserMenu)

@@ -4,5 +4,6 @@
     "dstFieldAudio": "Vocabulary-Audio",
     "dstFieldDef": "Sanseido",
     "dstFieldImage": "Image",
-    "dstFieldSentence": "Expression"
+    "dstFieldSentence": "Expression",
+    "overwriteImages": "true"
 }

@@ -11,6 +11,7 @@ config = mw.addonManager.getConfig(__name__)
 """ Config values """
 srcFieldKanji = config['srcFieldKanji']
 dstFieldImage = config['dstFieldImage']
+overwriteImages = config['overwriteImages']
 
 def addImageFiles(nids):
     mw.checkpoint("Download Audio")
@@ -26,7 +27,7 @@ def addImageFiles(nids):
             showInfo(f"No destination field '{dstFieldImage}' field found for audio")
             continue # no destination image field
 
-        if note[dstFieldImage]:
+        if note[dstFieldImage] and overwriteImages != "true":
             continue # already contains data
     
         (data, file_name) = imageDownload(note[srcFieldKanji]) # download the actual image
