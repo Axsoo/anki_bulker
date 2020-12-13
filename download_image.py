@@ -19,7 +19,9 @@ def get_extension(url):
 def filter_url_list(url_list):
     url_list = [value for value in url_list if 'gstatic' not in value] #Remove google icons
     url_list = [value for value in url_list if 'google' not in value] #Remove google icons
+    url_list = [value for value in url_list if 'kokugo' not in value]
     url_list = [value for value in url_list if 'trans-suite' not in value]
+    url_list = [value for value in url_list if 'tanoshiijapanese' not in value]
     url_list = [value for value in url_list if 'meaning-book' not in value]
     url_list = [value for value in url_list if 'cidianwang' not in value]
     url_list = [value for value in url_list if 'moedict' not in value]
