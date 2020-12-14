@@ -1,7 +1,6 @@
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.parse import quote
 from urllib.error import URLError
-from bs4 import BeautifulSoup
 import logging
 import uuid
 import re
@@ -44,11 +43,11 @@ def imageDownload(kanji):
     url = "https://www.google.co.in/search?q=%s&source=lnms&tbm=isch" % query
 
     # Getting image url addresses from google
-    response = urlopen(Request(url, headers=REQUEST_HEADER))
-    soup = BeautifulSoup(response, 'html.parser')
-    logger.info('Getting image elements...')
-    img_url_matches = re.findall(r'(?:http(?:s?):)(?:[/|.|\w|\s|-])*\.(?:jpg|gif|png)',soup.text)
-
+    response = urlopen(Request(url, headers=REQUEST_HEADER))    
+    response_raw_html = response.read().decode("utf8")
+    logger.info('Getting image elements...')  
+    img_url_matches = re.findall(r'(?:http(?:s?):)(?:[/|.|\w|\s|-])*\.(?:jpg|gif|png)',response_raw_html)
+    
     # Remove bad urls
     img_url_matches = [url for url in img_url_matches if not "trans-suite" in url]
     img_url_matches = [url for url in img_url_matches if not "google" in url]
@@ -86,7 +85,8 @@ def imageDownload(kanji):
 if __name__ == "__main__":
     
     logger.info("Testing...")
-    imageDownload("隔離イラスト")
+    imageDownload("dog")
+    #imageDownload("隔離イラスト")
 
 
     

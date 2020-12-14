@@ -1,7 +1,6 @@
 from urllib.request import urlopen, Request, urlretrieve
 from urllib.parse import quote
 from urllib.error import URLError
-from bs4 import BeautifulSoup
 import logging
 import uuid
 import re
@@ -43,8 +42,8 @@ def imageDownload(kanji):
 
     # Getting image url addresses from google
     response = urlopen(Request(url, headers=REQUEST_HEADER))
-    soup = BeautifulSoup(response, 'html.parser')
-    img_url_matches = re.findall(r'(?:http(?:s?):)(?:[/|.|\w|\s|-])*\.(?:jpg|gif|png)',soup.text)
+    response_raw_html = response.read().decode("utf8")
+    img_url_matches = re.findall(r'(?:http(?:s?):)(?:[/|.|\w|\s|-])*\.(?:jpg|gif|png)',response_raw_html)
 
     # Remove bad urls
     sorted_url_list = filter_url_list(img_url_matches)
